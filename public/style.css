@@ -1,0 +1,12 @@
+body {
+  background-color: #262822;
+}
+
+.box-json {
+  border: 1px solid white;
+  padding: 1rem;
+}
+
+.custom-file-input {
+  color: red;
+}
