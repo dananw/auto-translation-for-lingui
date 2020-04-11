@@ -22,7 +22,7 @@ import {
   isValidJSONString, 
   toParagraph, 
   paragraphToArray, 
-  isEmpty
+  isEmpty,
 } from '../lib/index'
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -95,6 +95,7 @@ const Index = ({}) => {
     // check translate failed or success, if failed will return null
     if(textTranslated) {
       const arrayTranslated = await paragraphToArray(textTranslated)
+      // console.log(arrayTranslated)
   
       for (let i in objSource) {
         indexing += 1;
@@ -167,7 +168,7 @@ const Index = ({}) => {
               <Label className="text-white">Translate To</Label>
                 <Input type="select" name="to" onChange={onChangeSelection} disabled={loading}>
                   {Object.keys(country).map((key, value) => (
-                    <option key={country[key]} value={country[key]}>{key}</option>
+                    <option key={key} value={key}>{country[key]}</option>
                   ))}
                 </Input>              
               </FormGroup>
