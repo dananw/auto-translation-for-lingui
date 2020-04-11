@@ -1,10 +1,36 @@
 import React, {useState, useEffect, useRef} from 'react'
 import dynamic from 'next/dynamic'
-import { Container, Row, Col, Button, Form, FormGroup, Input, Label, ButtonGroup, ButtonToolbar  } from 'reactstrap';
-import {translateAPI, isValidJSONString, toParagraph, paragraphToArray, isEmpty} from '../lib/index'
 import example from '../data/example.json'
 import country from '../data/country.json'
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+
+import { 
+  Container, 
+  Row, 
+  Col, 
+  Button, 
+  Form, 
+  FormGroup, 
+  Input, 
+  Label, 
+  ButtonGroup, 
+  ButtonToolbar  
+} from 'reactstrap';
+
+import {
+  translateAPI, 
+  isValidJSONString, 
+  toParagraph, 
+  paragraphToArray, 
+  isEmpty
+} from '../lib/index'
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const DynamicReactJson = dynamic(import('react-json-view'), { ssr: false });
+
+let indexing = 0;
 
 const Index = ({}) => {
   const [sourceLang, setSourceLang] = useState('auto')
@@ -12,12 +38,13 @@ const Index = ({}) => {
   const [objSource, setObjSource] = useState({})
   const [translateValue, setTranslateValue] = useState({})
   const [loading, setLoading] = useState(false)
+  const [wait, setWait] = useState(false)
 
   const fileInput = useRef(null);
-  let indexing = 0;
-
+  
   useEffect(() => {
     onTranslate()
+    
   }, [targetLang])
   
   const useExample = () => {
@@ -51,6 +78,7 @@ const Index = ({}) => {
 
   const onTranslate = async () => {
     if(isEmpty(objSource)) return
+    if(wait) return
 
     if(targetLang === 'hy') {
       alert('sorry, an error occurred while translating to this language.')
@@ -78,6 +106,16 @@ const Index = ({}) => {
       alert("An error occurred while contacting the server, please try within a few minutes.")
     }
 
+    toast.info("Please wait before next request...", {
+      autoClose: 3000,
+      onOpen: () => {
+        setWait(true)
+      },
+      onClose: () => {
+        setWait(false)
+      }
+    });
+
     setLoading(false)
   }
 
@@ -91,6 +129,7 @@ const Index = ({}) => {
 
   return(
     <Container fluid style={{marginTop: '1rem'}}>
+      <ToastContainer pauseOnFocusLoss={false} />
       <h3 className="text-white">Auto Translation Tools</h3>
       <p className="text-white">This tools is create for simply translation JSON file for <a href="https://lingui.js.org/">lingui.js</a></p>
       <p className="text-white">Created By: <a href="https://github.com/dananw/auto-translation-for-lingui">Danan Wijaya</a></p>
@@ -134,16 +173,36 @@ const Index = ({}) => {
               </FormGroup>
             </Col>
           </Row>
-          <ButtonToolbar>
-            <ButtonGroup>
-              <Button onClick={useExample}>Use example file</Button>  
-              <Button color="primary" onClick={() => triggerInputFile()}>Upload JSON file</Button>
-              <Button color="success" onClick={onTranslate} disabled={loading}>
-                {loading ? 'Loading . . .' : 'Translate'}
-              </Button>
-            </ButtonGroup>
-          </ButtonToolbar>
           
+          <Row>
+            <Col md="6" sm="12">
+              <ButtonToolbar>
+                <ButtonGroup>
+                  <Button onClick={useExample}>Use example file</Button>  
+                  <Button color="primary" onClick={() => triggerInputFile()}>Upload JSON file</Button>
+                  <Button color="success" onClick={onTranslate} disabled={loading}>
+                    {loading ? 'Loading . . .' : 'Translate'}
+                  </Button>
+                </ButtonGroup>
+              </ButtonToolbar>
+            </Col>
+            <Col md="6" sm="12">
+              <ButtonToolbar>
+                <ButtonGroup>
+                  <CopyToClipboard 
+                    text={JSON.stringify(translateValue, null, 2)}
+                    onCopy={() => toast.success("Copied", {
+                      position: toast.POSITION.BOTTOM_CENTER,
+                      autoClose: 1500,
+                      hideProgressBar: true,
+                    })}
+                  >
+                    <Button color="info">Copy Translate to clipboard</Button>  
+                  </CopyToClipboard>
+                </ButtonGroup>
+              </ButtonToolbar>
+            </Col>
+          </Row>
         </Col>
       </Row>
 
