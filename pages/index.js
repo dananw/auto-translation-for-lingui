@@ -18,8 +18,6 @@ const Index = ({}) => {
 
   useEffect(() => {
     onTranslate()
-    console.log('useEffect')
-    
   }, [targetLang])
   
   const useExample = () => {
