@@ -4,7 +4,7 @@ This tool helps developers easily translate JSON files for **LinguiJS**, making 
 
 ✅ **Featured by LinguiJS** on their official site! 🎉
 
-DEMO : https://auto-translation.now.sh
+Website : https://auto-translation.now.sh
 
 ## 🚀 Features
 - Automatically translates JSON files for LinguiJS
